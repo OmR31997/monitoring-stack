@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monitoring Stack Gateway</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #090d16;
+      --card-bg: rgba(26, 34, 53, 0.75);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --accent-blue: #38bdf8;
+      --accent-purple: #a855f7;
+      --accent-green: #22c55e;
+      --accent-red: #ef4444;
+      --accent-amber: #f59e0b;
+      --glass-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(at 15% 15%, rgba(56, 189, 248, 0.12) 0px, transparent 50%),
+        radial-gradient(at 85% 85%, rgba(168, 85, 247, 0.12) 0px, transparent 50%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2.5rem 1.5rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1120px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--card-border);
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .brand-icon {
+      width: 46px;
+      height: 46px;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
+    }
+
+    .brand-text h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(to right, #ffffff, #cbd5e1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-text p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .header-stats {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .stat-badge {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.825rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      backdrop-filter: blur(10px);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--accent-green);
+      box-shadow: 0 0 10px var(--accent-green);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      backdrop-filter: blur(16px);
+      box-shadow: var(--glass-shadow);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(56, 189, 248, 0.3);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 20px rgba(56, 189, 248, 0.15);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+
+    .service-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .live-pill {
+      font-size: 0.725rem;
+      font-weight: 600;
+      padding: 0.25rem 0.6rem;
+      border-radius: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .live-pill.online {
+      background: rgba(34, 197, 94, 0.15);
+      color: #4ade80;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+
+    .live-pill.offline {
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .live-pill.checking {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .card-body h2 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+      color: var(--text-main);
+    }
+
+    .card-body p {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+      margin-bottom: 1.25rem;
+    }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .tag {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.5rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 6px;
+      color: #cbd5e1;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .btn {
+      flex: 1;
+      text-align: center;
+      padding: 0.65rem 1rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #0369a1, #1d4ed8);
+      box-shadow: 0 6px 16px rgba(2, 132, 199, 0.4);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-main);
+      border: 1px solid var(--card-border);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    footer {
+      text-align: center;
+      padding-top: 2rem;
+      border-top: 1px solid var(--card-border);
+      color: var(--text-muted);
+      font-size: 0.825rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: #1e293b;
+      border: 1px solid var(--accent-blue);
+      color: var(--text-main);
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s ease;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="brand-icon">📊</div>
+        <div class="brand-text">
+          <h1>Monitoring Gateway</h1>
+          <p>Production & Local Observability Hub</p>
+        </div>
+      </div>
+      <div class="header-stats">
+        <div class="stat-badge">
+          <div class="status-dot"></div>
+          <span>Gateway Active</span>
+        </div>
+        <div class="stat-badge" id="online-counter">
+          <span>Checking Services...</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <!-- Grafana Card -->
+      <div class="card">
+        <div>
+          <div class="card-top">
+            <div class="service-icon" style="color: #f97316;">📈</div>
+            <div class="live-pill checking" id="status-grafana">Checking...</div>
+          </div>
+          <div class="card-body">
+            <h2>Grafana Dashboards</h2>
+            <p>Interactive analytics, custom visualization dashboards, and metric alerts.</p>
+            <div class="card-meta">
+              <span class="tag">UI Portal</span>
+              <span class="tag">Port 3000</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="/grafana/" class="btn btn-primary">Open Dashboards ↗</a>
+          <button class="btn btn-secondary" onclick="copyUrl('/grafana/')">Copy URL</button>
+        </div>
+      </div>
+
+      <!-- Prometheus Card -->
+      <div class="card">
+        <div>
+          <div class="card-top">
+            <div class="service-icon" style="color: #ef4444;">🔥</div>
+            <div class="live-pill checking" id="status-prometheus">Checking...</div>
+          </div>
+          <div class="card-body">
+            <h2>Prometheus UI</h2>
+            <p>PromQL query console, target discovery, scrapers, and alert manager status.</p>
+            <div class="card-meta">
+              <span class="tag">UI & TSDB</span>
+              <span class="tag">Port 9090</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="/prometheus/" class="btn btn-primary">Open Prometheus ↗</a>
+          <button class="btn btn-secondary" onclick="copyUrl('/prometheus/')">Copy URL</button>
+        </div>
+      </div>
+
+      <!-- Loki Card -->
+      <div class="card">
+        <div>
+          <div class="card-top">
+            <div class="service-icon" style="color: #38bdf8;">🪵</div>
+            <div class="live-pill checking" id="status-loki">Checking...</div>
+          </div>
+          <div class="card-body">
+            <h2>Loki Log Engine</h2>
+            <p>Log aggregation & indexing engine designed for Grafana log queries.</p>
+            <div class="card-meta">
+              <span class="tag">Logging API</span>
+              <span class="tag">Port 3100</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="/loki/ready" class="btn btn-primary" target="_blank">Loki Status ↗</a>
+          <button class="btn btn-secondary" onclick="copyUrl('/loki/ready')">Copy URL</button>
+        </div>
+      </div>
+
+      <!-- Node Exporter Card -->
+      <div class="card">
+        <div>
+          <div class="card-top">
+            <div class="service-icon" style="color: #10b981;">🖥️</div>
+            <div class="live-pill checking" id="status-node-exporter">Checking...</div>
+          </div>
+          <div class="card-body">
+            <h2>Node Exporter</h2>
+            <p>Host machine hardware, CPU, memory, disk, and OS level telemetry metrics.</p>
+            <div class="card-meta">
+              <span class="tag">System Metrics</span>
+              <span class="tag">Port 9100</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="/node-exporter/metrics" class="btn btn-primary" target="_blank">View Metrics ↗</a>
+          <button class="btn btn-secondary" onclick="copyUrl('/node-exporter/metrics')">Copy URL</button>
+        </div>
+      </div>
+
+      <!-- cAdvisor Card -->
+      <div class="card">
+        <div>
+          <div class="card-top">
+            <div class="service-icon" style="color: #818cf8;">🐳</div>
+            <div class="live-pill checking" id="status-cadvisor">Checking...</div>
+          </div>
+          <div class="card-body">
+            <h2>cAdvisor</h2>
+            <p>Container resource usage, execution stats, and Docker container performance.</p>
+            <div class="card-meta">
+              <span class="tag">Container Metrics</span>
+              <span class="tag">Port 8080</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="/cadvisor/metrics" class="btn btn-primary" target="_blank">View Metrics ↗</a>
+          <button class="btn btn-secondary" onclick="copyUrl('/cadvisor/metrics')">Copy URL</button>
+        </div>
+      </div>
+
+      <!-- YACE Card -->
+      <div class="card">
+        <div>
+          <div class="card-top">
+            <div class="service-icon" style="color: #f59e0b;">☁️</div>
+            <div class="live-pill checking" id="status-yace">Checking...</div>
+          </div>
+          <div class="card-body">
+            <h2>YACE CloudWatch</h2>
+            <p>AWS CloudWatch Exporter retrieving EC2, RDS, and AWS cloud metrics.</p>
+            <div class="card-meta">
+              <span class="tag">AWS CloudWatch</span>
+              <span class="tag">Port 5000</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="/yace/metrics" class="btn btn-primary" target="_blank">View Metrics ↗</a>
+          <button class="btn btn-secondary" onclick="copyUrl('/yace/metrics')">Copy URL</button>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <div>Monitoring Stack &bull; Nginx Unified Gateway</div>
+      <div>Auto Health Check Active</div>
+    </footer>
+  </div>
+
+  <div id="toast" class="toast">URL copied to clipboard!</div>
+
+  <script>
+    const services = [
+      { id: "grafana", url: "/grafana/api/health" },
+      { id: "prometheus", url: "/prometheus/-/healthy" },
+      { id: "loki", url: "/loki/ready" },
+      { id: "node-exporter", url: "/node-exporter/metrics" },
+      { id: "cadvisor", url: "/cadvisor/metrics" },
+      { id: "yace", url: "/yace/metrics" }
+    ];
+
+    async function checkServiceHealth(service) {
+      const el = document.getElementById("status-" + service.id);
+      const startTime = performance.now();
+      try {
+        const res = await fetch(service.url, { method: "GET", cache: "no-store" });
+        const latency = Math.round(performance.now() - startTime);
+        if (res.ok || res.status === 302 || res.status === 401) {
+          el.className = "live-pill online";
+          el.innerHTML = "ONLINE (" + latency + "ms)";
+          return true;
+        } else {
+          el.className = "live-pill offline";
+          el.innerHTML = "OFFLINE (" + res.status + ")";
+          return false;
+        }
+      } catch (err) {
+        el.className = "live-pill offline";
+        el.innerHTML = "OFFLINE";
+        return false;
+      }
+    }
+
+    async function runHealthChecks() {
+      let onlineCount = 0;
+      const results = await Promise.all(services.map(s => checkServiceHealth(s)));
+      onlineCount = results.filter(Boolean).length;
+      const counterEl = document.getElementById("online-counter");
+      counterEl.innerHTML = "<span>" + onlineCount + " / " + services.length + " Online</span>";
+    }
+
+    function copyUrl(path) {
+      const fullUrl = window.location.origin + path;
+      navigator.clipboard.writeText(fullUrl).then(() => {
+        const toast = document.getElementById("toast");
+        toast.innerText = "Copied: " + path;
+        toast.classList.add("show");
+        setTimeout(() => toast.classList.remove("show"), 2500);
+      });
+    }
+
+    runHealthChecks();
+    setInterval(runHealthChecks, 15000);
+  </script>
+</body>
+</html>

@@ -4,38 +4,22 @@ server {
 
     # Landing page
     location = / {
-        add_header Content-Type text/html;
-        return 200 '<!DOCTYPE html>
-<html>
-<head>
-  <title>Monitoring Stack Gateway</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 40px; background-color: #1e1e2e; color: #cdd6f4; }
-    h2 { color: #89b4fa; }
-    ul { list-style: none; padding: 0; }
-    li { margin: 8px 0; }
-    a { text-decoration: none; font-weight: bold; }
-    a:hover { text-decoration: underline; }
-  </style>
-</head>
-<body>
-  <h2>🚀 Monitoring Stack Gateway</h2>
-  <p>Flexible access point for Local and Production environments.</p>
-  <ul>
-    <li><a style="color:#89b4fa;" href="/grafana/">Grafana Dashboards</a></li>
-    <li><a style="color:#89b4fa;" href="/prometheus/">Prometheus UI</a></li>
-    <li><a style="color:#a6e3a1;" href="/node-exporter/metrics">Node Exporter Metrics</a></li>
-    <li><a style="color:#a6e3a1;" href="/cadvisor/metrics">cAdvisor Metrics</a></li>
-    <li><a style="color:#a6e3a1;" href="/yace/metrics">YACE CloudWatch Metrics</a></li>
-    <li><a style="color:#fab387;" href="/loki/ready">Loki Status</a></li>
-  </ul>
-</body>
-</html>';
+        root /usr/share/nginx/html;
+        index index.html;
+        try_files /index.html =404;
     }
+
+    # Redirect root paths without trailing slashes
+    location = /grafana { return 301 /grafana/; }
+    location = /prometheus { return 301 /prometheus/; }
+    location = /loki { return 301 /loki/ready; }
+    location = /node-exporter { return 301 /node-exporter/metrics; }
+    location = /cadvisor { return 301 /cadvisor/metrics; }
+    location = /yace { return 301 /yace/metrics; }
 
     # Grafana
     location /grafana/ {
-        proxy_pass http://grafana:3000/;
+        proxy_pass http://grafana:3000;
         proxy_set_header Host $http_host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -44,7 +28,7 @@ server {
 
     # Prometheus
     location /prometheus/ {
-        proxy_pass http://prometheus:9090/;
+        proxy_pass http://prometheus:9090;
         proxy_set_header Host $http_host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
