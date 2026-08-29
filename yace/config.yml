@@ -11,15 +11,193 @@ static:
       - name: CPUUtilization
         statistics:
           - Average
-        period: 600
-        length: 604800
+          - Maximum
+        period: 300
+        length: 3600
       - name: NetworkIn
         statistics:
           - Average
-        period: 600
-        length: 604800
+        period: 300
+        length: 3600
       - name: NetworkOut
         statistics:
           - Average
-        period: 600
-        length: 604800
+        period: 300
+        length: 3600
+      - name: DiskReadBytes
+        statistics:
+          - Average
+        period: 300
+        length: 3600
+      - name: DiskWriteBytes
+        statistics:
+          - Average
+        period: 300
+        length: 3600
+      - name: StatusCheckFailed
+        statistics:
+          - Maximum
+        period: 300
+        length: 3600
+
+  - name: rds-metrics
+    regions:
+      - eu-north-1
+      - ap-south-1
+      - us-east-1
+    namespace: AWS/RDS
+    metrics:
+      - name: CPUUtilization
+        statistics:
+          - Average
+          - Maximum
+        period: 300
+        length: 3600
+      - name: DatabaseConnections
+        statistics:
+          - Average
+          - Maximum
+        period: 300
+        length: 3600
+      - name: FreeableMemory
+        statistics:
+          - Average
+        period: 300
+        length: 3600
+      - name: FreeStorageSpace
+        statistics:
+          - Average
+        period: 300
+        length: 3600
+      - name: ReadIOPS
+        statistics:
+          - Average
+        period: 300
+        length: 3600
+      - name: WriteIOPS
+        statistics:
+          - Average
+        period: 300
+        length: 3600
+      - name: ReadLatency
+        statistics:
+          - Average
+        period: 300
+        length: 3600
+      - name: WriteLatency
+        statistics:
+          - Average
+        period: 300
+        length: 3600
+
+  - name: ecs-metrics
+    regions:
+      - eu-north-1
+      - ap-south-1
+      - us-east-1
+    namespace: AWS/ECS
+    metrics:
+      - name: CPUUtilization
+        statistics:
+          - Average
+          - Maximum
+        period: 300
+        length: 3600
+      - name: MemoryUtilization
+        statistics:
+          - Average
+          - Maximum
+        period: 300
+        length: 3600
+
+  - name: elasticache-metrics
+    regions:
+      - eu-north-1
+      - ap-south-1
+      - us-east-1
+    namespace: AWS/ElastiCache
+    metrics:
+      - name: CPUUtilization
+        statistics:
+          - Average
+        period: 300
+        length: 3600
+      - name: FreeableMemory
+        statistics:
+          - Average
+        period: 300
+        length: 3600
+      - name: CacheHits
+        statistics:
+          - Sum
+        period: 300
+        length: 3600
+      - name: CacheMisses
+        statistics:
+          - Sum
+        period: 300
+        length: 3600
+      - name: CurrConnections
+        statistics:
+          - Average
+        period: 300
+        length: 3600
+
+  - name: s3-metrics
+    regions:
+      - eu-north-1
+      - ap-south-1
+      - us-east-1
+    namespace: AWS/S3
+    metrics:
+      - name: BucketSizeBytes
+        statistics:
+          - Average
+        period: 86400
+        length: 86400
+      - name: NumberOfObjects
+        statistics:
+          - Average
+        period: 86400
+        length: 86400
+
+  - name: natgateway-metrics
+    regions:
+      - eu-north-1
+      - ap-south-1
+      - us-east-1
+    namespace: AWS/NATGateway
+    metrics:
+      - name: BytesInFromSource
+        statistics:
+          - Sum
+        period: 300
+        length: 3600
+      - name: BytesOutToDestination
+        statistics:
+          - Sum
+        period: 300
+        length: 3600
+      - name: ErrorPortAllocation
+        statistics:
+          - Sum
+        period: 300
+        length: 3600
+
+  - name: sns-metrics
+    regions:
+      - eu-north-1
+      - ap-south-1
+      - us-east-1
+    namespace: AWS/SNS
+    metrics:
+      - name: NumberOfMessagesPublished
+        statistics:
+          - Sum
+        period: 300
+        length: 3600
+      - name: NumberOfNotificationsFailed
+        statistics:
+          - Sum
+        period: 300
+        length: 3600

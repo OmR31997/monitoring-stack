@@ -20,64 +20,9 @@
   "panels": [
     {
       "collapsed": false,
-      "gridPos": { "h": 4, "w": 8, "x": 0, "y": 0 },
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
       "id": 1,
-      "title": "AWS EC2 Average CPU Utilization (%)",
-      "type": "stat",
-      "datasource": { "type": "prometheus", "uid": "Prometheus" },
-      "targets": [
-        {
-          "expr": "avg(aws_ec2_cpuutilization_average{region=~\"$region\", dimension_InstanceId=~\"$instance_id\"}) or avg(aws_ec2_cpuutilization_average{region=~\"$region\"}) or vector(0)",
-          "legendFormat": "EC2 CPU Avg",
-          "refId": "A"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "color": { "mode": "thresholds" },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              { "color": "green", "value": null },
-              { "color": "orange", "value": 75 },
-              { "color": "red", "value": 90 }
-            ]
-          },
-          "unit": "percent"
-        }
-      }
-    },
-    {
-      "collapsed": false,
-      "gridPos": { "h": 4, "w": 8, "x": 8, "y": 0 },
-      "id": 2,
-      "title": "Monitored EC2 Instance / Metric Count",
-      "type": "stat",
-      "datasource": { "type": "prometheus", "uid": "Prometheus" },
-      "targets": [
-        {
-          "expr": "count(aws_ec2_cpuutilization_average{region=~\"$region\", dimension_InstanceId=~\"$instance_id\"}) or count(aws_ec2_cpuutilization_average{region=~\"$region\"}) or vector(0)",
-          "legendFormat": "Count",
-          "refId": "A"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "color": { "mode": "thresholds" },
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              { "color": "blue", "value": null }
-            ]
-          }
-        }
-      }
-    },
-    {
-      "collapsed": false,
-      "gridPos": { "h": 4, "w": 8, "x": 16, "y": 0 },
-      "id": 3,
-      "title": "YACE CloudWatch Exporter Status",
+      "title": "YACE Exporter Status",
       "type": "stat",
       "datasource": { "type": "prometheus", "uid": "Prometheus" },
       "targets": [
@@ -105,8 +50,100 @@
     },
     {
       "collapsed": false,
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+      "id": 2,
+      "title": "Avg EC2 CPU Utilization",
+      "type": "stat",
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "targets": [
+        {
+          "expr": "avg(aws_ec2_cpuutilization_average) or vector(0)",
+          "legendFormat": "EC2 CPU Avg",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 75 },
+              { "color": "red", "value": 90 }
+            ]
+          },
+          "unit": "percent"
+        }
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+      "id": 3,
+      "title": "Avg RDS CPU Utilization",
+      "type": "stat",
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "targets": [
+        {
+          "expr": "avg(aws_rds_cpuutilization_average) or vector(0)",
+          "legendFormat": "RDS CPU Avg",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 75 },
+              { "color": "red", "value": 90 }
+            ]
+          },
+          "unit": "percent"
+        }
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
       "id": 4,
+      "title": "Active RDS Connections",
+      "type": "stat",
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "targets": [
+        {
+          "expr": "sum(aws_rds_database_connections_average) or vector(0)",
+          "legendFormat": "DB Connections",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "blue", "value": null }
+            ]
+          }
+        }
+      }
+    },
+
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 4 },
+      "id": 100,
+      "title": "🖥️ AWS EC2 Compute Instances",
+      "type": "row"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 5 },
+      "id": 5,
       "title": "EC2 Instance CPU Utilization Trend",
       "type": "timeseries",
       "datasource": { "type": "prometheus", "uid": "Prometheus" },
@@ -115,11 +152,6 @@
           "expr": "aws_ec2_cpuutilization_average{region=~\"$region\", dimension_InstanceId=~\"$instance_id\"}",
           "legendFormat": "{{dimension_InstanceId}} ({{region}})",
           "refId": "A"
-        },
-        {
-          "expr": "aws_ec2_cpuutilization_average{region=~\"$region\"}",
-          "legendFormat": "EC2 Overall Avg ({{region}})",
-          "refId": "B"
         }
       ],
       "fieldConfig": {
@@ -131,8 +163,8 @@
     },
     {
       "collapsed": false,
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
-      "id": 5,
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 5 },
+      "id": 6,
       "title": "EC2 Network Traffic (In / Out)",
       "type": "timeseries",
       "datasource": { "type": "prometheus", "uid": "Prometheus" },
@@ -146,16 +178,6 @@
           "expr": "aws_ec2_network_out_average{region=~\"$region\", dimension_InstanceId=~\"$instance_id\"}",
           "legendFormat": "{{dimension_InstanceId}} Network Out",
           "refId": "B"
-        },
-        {
-          "expr": "aws_ec2_network_in_average{region=~\"$region\"}",
-          "legendFormat": "Overall Network In ({{region}})",
-          "refId": "C"
-        },
-        {
-          "expr": "aws_ec2_network_out_average{region=~\"$region\"}",
-          "legendFormat": "Overall Network Out ({{region}})",
-          "refId": "D"
         }
       ],
       "fieldConfig": {
@@ -164,12 +186,382 @@
           "unit": "bytes"
         }
       }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 13 },
+      "id": 7,
+      "title": "EC2 Disk Operations (Read / Write)",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "targets": [
+        {
+          "expr": "aws_ec2_disk_read_bytes_average{region=~\"$region\"}",
+          "legendFormat": "Disk Read Bytes",
+          "refId": "A"
+        },
+        {
+          "expr": "aws_ec2_disk_write_bytes_average{region=~\"$region\"}",
+          "legendFormat": "Disk Write Bytes",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "drawStyle": "line", "lineInterpolation": "smooth" },
+          "unit": "bytes"
+        }
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 13 },
+      "id": 8,
+      "title": "EC2 Status Check Failures",
+      "type": "stat",
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "targets": [
+        {
+          "expr": "sum(aws_ec2_status_check_failed_maximum{region=~\"$region\"}) or vector(0)",
+          "legendFormat": "Failed Checks",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "red", "value": 1 }
+            ]
+          }
+        }
+      }
+    },
+
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 21 },
+      "id": 200,
+      "title": "🗄️ AWS RDS & Aurora Databases",
+      "type": "row"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 22 },
+      "id": 9,
+      "title": "RDS Database CPU Utilization Trend",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "targets": [
+        {
+          "expr": "aws_rds_cpuutilization_average{region=~\"$region\"}",
+          "legendFormat": "{{dimension_DBInstanceIdentifier}} CPU Utilization",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "drawStyle": "line", "lineInterpolation": "smooth" },
+          "unit": "percent"
+        }
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 22 },
+      "id": 10,
+      "title": "RDS Active Database Connections",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "targets": [
+        {
+          "expr": "aws_rds_database_connections_average{region=~\"$region\"}",
+          "legendFormat": "{{dimension_DBInstanceIdentifier}} Connections",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "drawStyle": "line", "lineInterpolation": "smooth" }
+        }
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 30 },
+      "id": 11,
+      "title": "RDS Free Storage Space & Memory",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "targets": [
+        {
+          "expr": "aws_rds_free_storage_space_average{region=~\"$region\"}",
+          "legendFormat": "{{dimension_DBInstanceIdentifier}} Free Storage",
+          "refId": "A"
+        },
+        {
+          "expr": "aws_rds_freeable_memory_average{region=~\"$region\"}",
+          "legendFormat": "{{dimension_DBInstanceIdentifier}} Freeable Memory",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "drawStyle": "line", "lineInterpolation": "smooth" },
+          "unit": "bytes"
+        }
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 30 },
+      "id": 12,
+      "title": "RDS Read / Write IOPS",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "targets": [
+        {
+          "expr": "aws_rds_read_iops_average{region=~\"$region\"}",
+          "legendFormat": "{{dimension_DBInstanceIdentifier}} Read IOPS",
+          "refId": "A"
+        },
+        {
+          "expr": "aws_rds_write_iops_average{region=~\"$region\"}",
+          "legendFormat": "{{dimension_DBInstanceIdentifier}} Write IOPS",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "drawStyle": "line", "lineInterpolation": "smooth" },
+          "unit": "iops"
+        }
+      }
+    },
+
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 38 },
+      "id": 300,
+      "title": "🐳 AWS ECS Container Clusters",
+      "type": "row"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 39 },
+      "id": 13,
+      "title": "ECS Cluster CPU Utilization",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "targets": [
+        {
+          "expr": "aws_ecs_cpuutilization_average{region=~\"$region\"}",
+          "legendFormat": "{{dimension_ClusterName}} CPU Utilization",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "drawStyle": "line", "lineInterpolation": "smooth" },
+          "unit": "percent"
+        }
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 39 },
+      "id": 14,
+      "title": "ECS Cluster Memory Utilization",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "targets": [
+        {
+          "expr": "aws_ecs_memory_utilization_average{region=~\"$region\"}",
+          "legendFormat": "{{dimension_ClusterName}} Memory Utilization",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "drawStyle": "line", "lineInterpolation": "smooth" },
+          "unit": "percent"
+        }
+      }
+    },
+
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 47 },
+      "id": 400,
+      "title": "⚡ AWS ElastiCache / MemoryDB",
+      "type": "row"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 48 },
+      "id": 15,
+      "title": "ElastiCache CPU Utilization & Freeable Memory",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "targets": [
+        {
+          "expr": "aws_elasticache_cpuutilization_average{region=~\"$region\"}",
+          "legendFormat": "{{dimension_CacheClusterId}} CPU",
+          "refId": "A"
+        },
+        {
+          "expr": "aws_elasticache_freeable_memory_average{region=~\"$region\"}",
+          "legendFormat": "{{dimension_CacheClusterId}} Memory",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "drawStyle": "line", "lineInterpolation": "smooth" }
+        }
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 48 },
+      "id": 16,
+      "title": "ElastiCache Hit / Miss Ratio",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "targets": [
+        {
+          "expr": "aws_elasticache_cache_hits_sum{region=~\"$region\"}",
+          "legendFormat": "Cache Hits",
+          "refId": "A"
+        },
+        {
+          "expr": "aws_elasticache_cache_misses_sum{region=~\"$region\"}",
+          "legendFormat": "Cache Misses",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "drawStyle": "line", "lineInterpolation": "smooth" }
+        }
+      }
+    },
+
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 56 },
+      "id": 500,
+      "title": "🪣 AWS S3 Storage & Objects",
+      "type": "row"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 57 },
+      "id": 17,
+      "title": "S3 Bucket Storage Size",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "targets": [
+        {
+          "expr": "aws_s3_bucket_size_bytes_average{region=~\"$region\"}",
+          "legendFormat": "{{dimension_BucketName}} Size",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "drawStyle": "line", "lineInterpolation": "smooth" },
+          "unit": "bytes"
+        }
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 57 },
+      "id": 18,
+      "title": "S3 Object Count",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "targets": [
+        {
+          "expr": "aws_s3_number_of_objects_average{region=~\"$region\"}",
+          "legendFormat": "{{dimension_BucketName}} Objects",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "drawStyle": "line", "lineInterpolation": "smooth" }
+        }
+      }
+    },
+
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 65 },
+      "id": 600,
+      "title": "🌐 AWS NAT Gateway & SNS Notifications",
+      "type": "row"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 66 },
+      "id": 19,
+      "title": "NAT Gateway Network Throughput",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "targets": [
+        {
+          "expr": "aws_natgateway_bytes_in_from_source_sum{region=~\"$region\"}",
+          "legendFormat": "Bytes In From Source",
+          "refId": "A"
+        },
+        {
+          "expr": "aws_natgateway_bytes_out_to_destination_sum{region=~\"$region\"}",
+          "legendFormat": "Bytes Out To Destination",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "drawStyle": "line", "lineInterpolation": "smooth" },
+          "unit": "bytes"
+        }
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 66 },
+      "id": 20,
+      "title": "SNS Messages Published vs Failed",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "targets": [
+        {
+          "expr": "aws_sns_number_of_messages_published_sum{region=~\"$region\"}",
+          "legendFormat": "Published Messages",
+          "refId": "A"
+        },
+        {
+          "expr": "aws_sns_number_of_notifications_failed_sum{region=~\"$region\"}",
+          "legendFormat": "Failed Notifications",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "custom": { "drawStyle": "line", "lineInterpolation": "smooth" }
+        }
+      }
     }
   ],
   "refresh": "1m",
   "schemaVersion": 38,
   "style": "dark",
-  "tags": ["aws", "cloudwatch", "yace", "ec2"],
+  "tags": ["aws", "cloudwatch", "yace", "ec2", "rds", "ecs", "elasticache", "s3"],
   "templating": {
     "list": [
       {
@@ -184,12 +576,11 @@
           { "selected": true, "text": "All", "value": "$__all" },
           { "selected": false, "text": "eu-north-1", "value": "eu-north-1" },
           { "selected": false, "text": "ap-south-1", "value": "ap-south-1" },
-          { "selected": false, "text": "us-east-1", "value": "us-east-1" },
-          { "selected": false, "text": "us-west-2", "value": "us-west-2" }
+          { "selected": false, "text": "us-east-1", "value": "us-east-1" }
         ],
-        "query": "eu-north-1, ap-south-1, us-east-1, us-west-2",
+        "query": "label_values(aws_ec2_cpuutilization_average, region)",
         "skipUrlSync": false,
-        "type": "custom"
+        "type": "query"
       },
       {
         "allValue": ".*",
@@ -200,14 +591,11 @@
         "multi": true,
         "name": "instance_id",
         "options": [
-          { "selected": true, "text": "All", "value": "$__all" },
-          { "selected": false, "text": "i-0123456789abcdef0", "value": "i-0123456789abcdef0" },
-          { "selected": false, "text": "i-0fe4596123456789a", "value": "i-0fe4596123456789a" },
-          { "selected": false, "text": "i-0abcd1234ef567890", "value": "i-0abcd1234ef567890" }
+          { "selected": true, "text": "All", "value": "$__all" }
         ],
-        "query": "i-0123456789abcdef0, i-0fe4596123456789a, i-0abcd1234ef567890",
+        "query": "label_values(aws_ec2_cpuutilization_average, dimension_InstanceId)",
         "skipUrlSync": false,
-        "type": "custom"
+        "type": "query"
       }
     ]
   },
