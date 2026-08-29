@@ -1,0 +1,32 @@
+{
+  "regions": [
+    {
+      "name": "stockholm",
+      "region": "eu-north-1",
+      "instances": [
+        "i-0fb5c3f5782d807f0"
+      ]
+    },
+    {
+      "name": "mumbai",
+      "region": "ap-south-1",
+      "instances": [
+        "i-07a68bb7066c97e64"
+      ]
+    },
+    {
+      "name": "hyderabad",
+      "region": "ap-south-2",
+      "instances": [
+        "i-0495082984c755da5"
+      ]
+    },
+    {
+      "name": "virginia",
+      "region": "us-east-1",
+      "instances": [
+        "i-0987654321abcdef0"
+      ]
+    }
+  ]
+}
