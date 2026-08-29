@@ -1,0 +1,85 @@
+server {
+    listen ${NGINX_PORT} default_server;
+    server_name ${SERVER_NAME} localhost 127.0.0.1;
+
+    # Landing page
+    location = / {
+        add_header Content-Type text/html;
+        return 200 '<!DOCTYPE html>
+<html>
+<head>
+  <title>Monitoring Stack Gateway</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; background-color: #1e1e2e; color: #cdd6f4; }
+    h2 { color: #89b4fa; }
+    ul { list-style: none; padding: 0; }
+    li { margin: 8px 0; }
+    a { text-decoration: none; font-weight: bold; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <h2>🚀 Monitoring Stack Gateway</h2>
+  <p>Flexible access point for Local and Production environments.</p>
+  <ul>
+    <li><a style="color:#89b4fa;" href="/grafana/">Grafana Dashboards</a></li>
+    <li><a style="color:#89b4fa;" href="/prometheus/">Prometheus UI</a></li>
+    <li><a style="color:#a6e3a1;" href="/node-exporter/metrics">Node Exporter Metrics</a></li>
+    <li><a style="color:#a6e3a1;" href="/cadvisor/metrics">cAdvisor Metrics</a></li>
+    <li><a style="color:#a6e3a1;" href="/yace/metrics">YACE CloudWatch Metrics</a></li>
+    <li><a style="color:#fab387;" href="/loki/ready">Loki Status</a></li>
+  </ul>
+</body>
+</html>';
+    }
+
+    # Grafana
+    location /grafana/ {
+        proxy_pass http://grafana:3000/;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # Prometheus
+    location /prometheus/ {
+        proxy_pass http://prometheus:9090/;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # Node Exporter
+    location /node-exporter/ {
+        proxy_pass http://node-exporter:9100/;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    # cAdvisor
+    location /cadvisor/ {
+        proxy_pass http://cadvisor:8080/;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    # YACE
+    location /yace/ {
+        proxy_pass http://yace:5000/;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    # Loki
+    location /loki/ {
+        proxy_pass http://loki:3100/;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}

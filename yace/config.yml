@@ -1,0 +1,27 @@
+apiVersion: v1alpha1
+
+discovery:
+  jobs:
+    - type: AWS/EC2
+      regions:
+        - eu-north-1
+        - ap-south-1
+      metrics:
+        - name: CPUUtilization
+          statistics:
+            - Average
+          period: 300
+          length: 600
+          delay: 300
+        - name: NetworkIn
+          statistics:
+            - Average
+          period: 300
+          length: 600
+          delay: 300
+        - name: NetworkOut
+          statistics:
+            - Average
+          period: 300
+          length: 600
+          delay: 300
