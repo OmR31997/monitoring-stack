@@ -27,7 +27,7 @@
       "datasource": { "type": "prometheus", "uid": "Prometheus" },
       "targets": [
         {
-          "expr": "avg(aws_ec2_cpuutilization_average) or vector(0)",
+          "expr": "avg(aws_ec2_cpuutilization_average{region=~\"$region\", dimension_InstanceId=~\"$instance_id\"}) or avg(aws_ec2_cpuutilization_average{region=~\"$region\"}) or vector(0)",
           "legendFormat": "EC2 CPU Avg",
           "refId": "A"
         }
@@ -51,13 +51,13 @@
       "collapsed": false,
       "gridPos": { "h": 4, "w": 8, "x": 8, "y": 0 },
       "id": 2,
-      "title": "Monitored EC2 Instance Count",
+      "title": "Monitored EC2 Instance / Metric Count",
       "type": "stat",
       "datasource": { "type": "prometheus", "uid": "Prometheus" },
       "targets": [
         {
-          "expr": "count(aws_ec2_cpuutilization_average) or vector(0)",
-          "legendFormat": "Instances",
+          "expr": "count(aws_ec2_cpuutilization_average{region=~\"$region\", dimension_InstanceId=~\"$instance_id\"}) or count(aws_ec2_cpuutilization_average{region=~\"$region\"}) or vector(0)",
+          "legendFormat": "Count",
           "refId": "A"
         }
       ],
@@ -112,9 +112,14 @@
       "datasource": { "type": "prometheus", "uid": "Prometheus" },
       "targets": [
         {
-          "expr": "aws_ec2_cpuutilization_average",
-          "legendFormat": "{{dimension_InstanceId}}",
+          "expr": "aws_ec2_cpuutilization_average{region=~\"$region\", dimension_InstanceId=~\"$instance_id\"}",
+          "legendFormat": "{{dimension_InstanceId}} ({{region}})",
           "refId": "A"
+        },
+        {
+          "expr": "aws_ec2_cpuutilization_average{region=~\"$region\"}",
+          "legendFormat": "EC2 Overall Avg ({{region}})",
+          "refId": "B"
         }
       ],
       "fieldConfig": {
@@ -133,14 +138,24 @@
       "datasource": { "type": "prometheus", "uid": "Prometheus" },
       "targets": [
         {
-          "expr": "aws_ec2_network_in_average",
+          "expr": "aws_ec2_network_in_average{region=~\"$region\", dimension_InstanceId=~\"$instance_id\"}",
           "legendFormat": "{{dimension_InstanceId}} Network In",
           "refId": "A"
         },
         {
-          "expr": "aws_ec2_network_out_average",
+          "expr": "aws_ec2_network_out_average{region=~\"$region\", dimension_InstanceId=~\"$instance_id\"}",
           "legendFormat": "{{dimension_InstanceId}} Network Out",
           "refId": "B"
+        },
+        {
+          "expr": "aws_ec2_network_in_average{region=~\"$region\"}",
+          "legendFormat": "Overall Network In ({{region}})",
+          "refId": "C"
+        },
+        {
+          "expr": "aws_ec2_network_out_average{region=~\"$region\"}",
+          "legendFormat": "Overall Network Out ({{region}})",
+          "refId": "D"
         }
       ],
       "fieldConfig": {
@@ -155,6 +170,47 @@
   "schemaVersion": 38,
   "style": "dark",
   "tags": ["aws", "cloudwatch", "yace", "ec2"],
+  "templating": {
+    "list": [
+      {
+        "allValue": ".*",
+        "current": { "selected": true, "text": "All", "value": "$__all" },
+        "hide": 0,
+        "includeAll": true,
+        "label": "Region",
+        "multi": true,
+        "name": "region",
+        "options": [
+          { "selected": true, "text": "All", "value": "$__all" },
+          { "selected": false, "text": "eu-north-1", "value": "eu-north-1" },
+          { "selected": false, "text": "ap-south-1", "value": "ap-south-1" },
+          { "selected": false, "text": "us-east-1", "value": "us-east-1" },
+          { "selected": false, "text": "us-west-2", "value": "us-west-2" }
+        ],
+        "query": "eu-north-1, ap-south-1, us-east-1, us-west-2",
+        "skipUrlSync": false,
+        "type": "custom"
+      },
+      {
+        "allValue": ".*",
+        "current": { "selected": true, "text": "All", "value": "$__all" },
+        "hide": 0,
+        "includeAll": true,
+        "label": "Instance ID",
+        "multi": true,
+        "name": "instance_id",
+        "options": [
+          { "selected": true, "text": "All", "value": "$__all" },
+          { "selected": false, "text": "i-0123456789abcdef0", "value": "i-0123456789abcdef0" },
+          { "selected": false, "text": "i-0fe4596123456789a", "value": "i-0fe4596123456789a" },
+          { "selected": false, "text": "i-0abcd1234ef567890", "value": "i-0abcd1234ef567890" }
+        ],
+        "query": "i-0123456789abcdef0, i-0fe4596123456789a, i-0abcd1234ef567890",
+        "skipUrlSync": false,
+        "type": "custom"
+      }
+    ]
+  },
   "time": { "from": "now-3h", "to": "now" },
   "timepicker": { "refresh_intervals": ["1m", "5m", "15m"] },
   "timezone": "browser",
