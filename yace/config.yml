@@ -1,13 +1,13 @@
 apiVersion: v1alpha1
 
 static:
-  - name: ec2-metrics
+  - name: ec2-i-0fb5c3f5782d807f0
     regions:
       - eu-north-1
-      - ap-south-1
-      - ap-south-2
-      - us-east-1
     namespace: AWS/EC2
+    dimensions:
+      - name: InstanceId
+        value: i-0fb5c3f5782d807f0
     metrics:
       - name: CPUUtilization
         statistics:
@@ -41,13 +41,13 @@ static:
         period: 300
         length: 3600
 
-  - name: rds-metrics
+  - name: ec2-i-07a68bb7066c97e64
     regions:
-      - eu-north-1
       - ap-south-1
-      - ap-south-2
-      - us-east-1
-    namespace: AWS/RDS
+    namespace: AWS/EC2
+    dimensions:
+      - name: InstanceId
+        value: i-07a68bb7066c97e64
     metrics:
       - name: CPUUtilization
         statistics:
@@ -55,50 +55,39 @@ static:
           - Maximum
         period: 300
         length: 3600
-      - name: DatabaseConnections
+      - name: NetworkIn
         statistics:
           - Average
+        period: 300
+        length: 3600
+      - name: NetworkOut
+        statistics:
+          - Average
+        period: 300
+        length: 3600
+      - name: DiskReadBytes
+        statistics:
+          - Average
+        period: 300
+        length: 3600
+      - name: DiskWriteBytes
+        statistics:
+          - Average
+        period: 300
+        length: 3600
+      - name: StatusCheckFailed
+        statistics:
           - Maximum
         period: 300
         length: 3600
-      - name: FreeableMemory
-        statistics:
-          - Average
-        period: 300
-        length: 3600
-      - name: FreeStorageSpace
-        statistics:
-          - Average
-        period: 300
-        length: 3600
-      - name: ReadIOPS
-        statistics:
-          - Average
-        period: 300
-        length: 3600
-      - name: WriteIOPS
-        statistics:
-          - Average
-        period: 300
-        length: 3600
-      - name: ReadLatency
-        statistics:
-          - Average
-        period: 300
-        length: 3600
-      - name: WriteLatency
-        statistics:
-          - Average
-        period: 300
-        length: 3600
 
-  - name: ecs-metrics
+  - name: ec2-i-0495082984c755da5
     regions:
-      - eu-north-1
-      - ap-south-1
       - ap-south-2
-      - us-east-1
-    namespace: AWS/ECS
+    namespace: AWS/EC2
+    dimensions:
+      - name: InstanceId
+        value: i-0495082984c755da5
     metrics:
       - name: CPUUtilization
         statistics:
@@ -106,105 +95,108 @@ static:
           - Maximum
         period: 300
         length: 3600
-      - name: MemoryUtilization
+      - name: NetworkIn
+        statistics:
+          - Average
+        period: 300
+        length: 3600
+      - name: NetworkOut
+        statistics:
+          - Average
+        period: 300
+        length: 3600
+      - name: DiskReadBytes
+        statistics:
+          - Average
+        period: 300
+        length: 3600
+      - name: DiskWriteBytes
+        statistics:
+          - Average
+        period: 300
+        length: 3600
+      - name: StatusCheckFailed
+        statistics:
+          - Maximum
+        period: 300
+        length: 3600
+  
+  - name: ec2-i-074ca6ca35546b58b
+    regions:
+      - ap-southeast-1
+    namespace: AWS/EC2
+    dimensions:
+      - name: InstanceId
+        value: i-074ca6ca35546b58b
+    metrics:
+      - name: CPUUtilization
         statistics:
           - Average
           - Maximum
         period: 300
         length: 3600
+      - name: NetworkIn
+        statistics:
+          - Average
+        period: 300
+        length: 3600
+      - name: NetworkOut
+        statistics:
+          - Average
+        period: 300
+        length: 3600
+      - name: DiskReadBytes
+        statistics:
+          - Average
+        period: 300
+        length: 3600
+      - name: DiskWriteBytes
+        statistics:
+          - Average
+        period: 300
+        length: 3600
+      - name: StatusCheckFailed
+        statistics:
+          - Maximum
+        period: 300
+        length: 3600
 
-  - name: elasticache-metrics
+  - name: ec2-i-0987654321abcdef0
     regions:
-      - eu-north-1
-      - ap-south-1
-      - ap-south-2
       - us-east-1
-    namespace: AWS/ElastiCache
+    namespace: AWS/EC2
+    dimensions:
+      - name: InstanceId
+        value: i-0987654321abcdef0
     metrics:
       - name: CPUUtilization
         statistics:
           - Average
+          - Maximum
         period: 300
         length: 3600
-      - name: FreeableMemory
+      - name: NetworkIn
         statistics:
           - Average
         period: 300
         length: 3600
-      - name: CacheHits
-        statistics:
-          - Sum
-        period: 300
-        length: 3600
-      - name: CacheMisses
-        statistics:
-          - Sum
-        period: 300
-        length: 3600
-      - name: CurrConnections
+      - name: NetworkOut
         statistics:
           - Average
         period: 300
         length: 3600
-
-  - name: s3-metrics
-    regions:
-      - eu-north-1
-      - ap-south-1
-      - ap-south-2
-      - us-east-1
-    namespace: AWS/S3
-    metrics:
-      - name: BucketSizeBytes
+      - name: DiskReadBytes
         statistics:
           - Average
-        period: 86400
-        length: 86400
-      - name: NumberOfObjects
+        period: 300
+        length: 3600
+      - name: DiskWriteBytes
         statistics:
           - Average
-        period: 86400
-        length: 86400
-
-  - name: natgateway-metrics
-    regions:
-      - eu-north-1
-      - ap-south-1
-      - ap-south-2
-      - us-east-1
-    namespace: AWS/NATGateway
-    metrics:
-      - name: BytesInFromSource
-        statistics:
-          - Sum
         period: 300
         length: 3600
-      - name: BytesOutToDestination
+      - name: StatusCheckFailed
         statistics:
-          - Sum
-        period: 300
-        length: 3600
-      - name: ErrorPortAllocation
-        statistics:
-          - Sum
-        period: 300
-        length: 3600
-
-  - name: sns-metrics
-    regions:
-      - eu-north-1
-      - ap-south-1
-      - ap-south-2
-      - us-east-1
-    namespace: AWS/SNS
-    metrics:
-      - name: NumberOfMessagesPublished
-        statistics:
-          - Sum
-        period: 300
-        length: 3600
-      - name: NumberOfNotificationsFailed
-        statistics:
-          - Sum
+          - Maximum
         period: 300
         length: 3600

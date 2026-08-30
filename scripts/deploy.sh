@@ -22,4 +22,7 @@ EOF
 
 sudo apt update && sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-sudo docker compose up -d
+chmod +x ./scripts/setup-env.sh
+./scripts/setup-env.sh
+
+sudo docker compose up -d --force-recreate

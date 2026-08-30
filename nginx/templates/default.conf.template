@@ -1,6 +1,6 @@
 server {
     listen ${NGINX_PORT} default_server;
-    server_name ${SERVER_NAME} localhost 127.0.0.1;
+    server_name _ ${SERVER_NAME} localhost 127.0.0.1;
 
     # Landing page
     location = / {

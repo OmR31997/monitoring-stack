@@ -6,8 +6,9 @@ providers:
     folder: 'Managed Dashboards'
     type: file
     disableDeletion: false
-    updateIntervalSeconds: 10
+    updateIntervalSeconds: 5
     allowUiUpdates: true
+    overwrite: true
     options:
       path: /var/lib/grafana/dashboards
       foldersFromFilesStructure: false

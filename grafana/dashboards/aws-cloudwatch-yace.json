@@ -240,7 +240,7 @@
       },
       "targets": [
         {
-          "expr": "aws_ec2_cpuutilization_average{region=~\"$region\", dimension_InstanceId=~\"$instance_id\"}",
+          "expr": "aws_ec2_cpuutilization_average{region=~\"$region\", dimension_InstanceId=~\"$instance_id|.*\"}",
           "legendFormat": "{{dimension_InstanceId}} ({{region}})",
           "refId": "A"
         }
@@ -272,12 +272,12 @@
       },
       "targets": [
         {
-          "expr": "aws_ec2_network_in_average{region=~\"$region\", dimension_InstanceId=~\"$instance_id\"}",
+          "expr": "aws_ec2_network_in_average{region=~\"$region\", dimension_InstanceId=~\"$instance_id|.*\"}",
           "legendFormat": "{{dimension_InstanceId}} Network In",
           "refId": "A"
         },
         {
-          "expr": "aws_ec2_network_out_average{region=~\"$region\", dimension_InstanceId=~\"$instance_id\"}",
+          "expr": "aws_ec2_network_out_average{region=~\"$region\", dimension_InstanceId=~\"$instance_id|.*\"}",
           "legendFormat": "{{dimension_InstanceId}} Network Out",
           "refId": "B"
         }
@@ -896,11 +896,16 @@
           },
           {
             "selected": false,
+            "text": "ap-southeast-1 (singapur)",
+            "value": "ap-southeast-1"
+          },
+          {
+            "selected": false,
             "text": "us-east-1 (virginia)",
             "value": "us-east-1"
           }
         ],
-        "query": "eu-north-1, ap-south-1, ap-south-2, us-east-1",
+        "query": "eu-north-1, ap-south-1, ap-south-2, ap-southeast-1, us-east-1",
         "skipUrlSync": false,
         "type": "custom"
       },
@@ -938,8 +943,8 @@
           },
           {
             "selected": false,
-            "text": "i-0123456789hyderabad (hyderabad)",
-            "value": "i-0123456789hyderabad"
+            "text": "i-0495082984c755da5 (hyderabad)",
+            "value": "i-0495082984c755da5"
           },
           {
             "selected": false,
@@ -947,7 +952,7 @@
             "value": "i-0987654321abcdef0"
           }
         ],
-        "query": "i-0fb5c3f5782d807f0, i-07a68bb7066c97e64, i-0123456789hyderabad, i-0987654321abcdef0",
+        "query": "i-0fb5c3f5782d807f0, i-07a68bb7066c97e64, i-0495082984c755da5, i-0987654321abcdef0",
         "skipUrlSync": false,
         "type": "custom"
       }
@@ -966,5 +971,6 @@
   },
   "timezone": "browser",
   "title": "AWS CloudWatch Metrics (YACE)",
-  "uid": "aws-cloudwatch-yace"
+  "uid": "aws-cloudwatch-yace",
+  "version": 100
 }
