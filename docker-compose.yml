@@ -6,6 +6,7 @@ volumes:
   prometheus-data: {}
   grafana-data: {}
   loki-data: {}
+  alloy-data: {}
 
 services:
   alpine:
@@ -56,8 +57,9 @@ services:
     restart: unless-stopped
 
   loki:
-    image: grafana/loki:3.5.0
+    image: grafana/loki:3.4.2
     container_name: loki
+
     ports:
       - "${BIND_IP:-0.0.0.0}:${LOKI_PORT}:3100"
     volumes:
@@ -81,6 +83,8 @@ services:
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.52.1
     container_name: cadvisor
+    privileged: true
+    pid: "host"
     ports:
       - "${BIND_IP:-0.0.0.0}:${CADVISOR_PORT}:8080"
     volumes:
@@ -88,10 +92,15 @@ services:
       - /var/run:/var/run:rw
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /sys:/sys:ro
-      - /var/lib/docker:/var/lib/docker:ro
+    command:
+      - "-docker_only=true"
+      - "-housekeeping_interval=10s"
+      - "-enable_metrics=cpu,memory,network,oom_event,process"
+
     networks:
       - monitoring
     restart: unless-stopped
+
 
   alloy:
     image: grafana/alloy:v1.6.1
@@ -99,10 +108,12 @@ services:
     volumes:
       - ./alloy/config.alloy:/etc/alloy/config.alloy:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      - alloy-data:/var/lib/alloy
     networks:
       - monitoring
     command:
       - "run"
+      - "--storage.path=/var/lib/alloy/data"
       - "/etc/alloy/config.alloy"
     depends_on:
       - prometheus

@@ -1,6 +1,8 @@
 apiVersion: v1alpha1
 
 static:
+
+
   - name: ec2-i-0fb5c3f5782d807f0
     regions:
       - eu-north-1

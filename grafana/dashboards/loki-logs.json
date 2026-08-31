@@ -20,15 +20,15 @@
   "panels": [
     {
       "collapsed": false,
-      "gridPos": { "h": 6, "w": 12, "x": 0, "y": 0 },
+      "gridPos": { "h": 6, "w": 8, "x": 0, "y": 0 },
       "id": 1,
-      "title": "Log Ingestion Volume Rate",
+      "title": "Log Ingestion Rate by Service",
       "type": "timeseries",
       "datasource": { "type": "loki", "uid": "Loki" },
       "targets": [
         {
-          "expr": "sum(rate({service_name=~\".+\"}[1m])) by (service_name)",
-          "legendFormat": "{{service_name}}",
+          "expr": "sum(rate({job=\"docker\", service=~\"$service\"}[1m])) by (service)",
+          "legendFormat": "{{service}}",
           "refId": "A"
         }
       ],
@@ -41,14 +41,14 @@
     },
     {
       "collapsed": false,
-      "gridPos": { "h": 6, "w": 12, "x": 12, "y": 0 },
+      "gridPos": { "h": 6, "w": 8, "x": 8, "y": 0 },
       "id": 2,
       "title": "Error Logs Count (Last 5m)",
       "type": "stat",
       "datasource": { "type": "loki", "uid": "Loki" },
       "targets": [
         {
-          "expr": "sum(count_over_time({service_name=~\".+\"} |~ \"(?i)(error|err|fail|fatal|exception)\" [5m]))",
+          "expr": "sum(count_over_time({job=\"docker\", service=~\"$service\"} |~ \"(?i)(error|err|fail|fatal|exception)\" [5m]))",
           "legendFormat": "Errors",
           "refId": "A"
         }
@@ -69,14 +69,63 @@
     },
     {
       "collapsed": false,
+      "gridPos": { "h": 6, "w": 8, "x": 16, "y": 0 },
+      "id": 4,
+      "title": "Warning Logs Count (Last 5m)",
+      "type": "stat",
+      "datasource": { "type": "loki", "uid": "Loki" },
+      "targets": [
+        {
+          "expr": "sum(count_over_time({job=\"docker\", service=~\"$service\"} |~ \"(?i)(warn|warning)\" [5m]))",
+          "legendFormat": "Warnings",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 1 },
+              { "color": "yellow", "value": 5 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "collapsed": false,
       "gridPos": { "h": 14, "w": 24, "x": 0, "y": 6 },
       "id": 3,
-      "title": "Live Logs Stream",
+      "title": "Application Container Logs Stream",
       "type": "logs",
       "datasource": { "type": "loki", "uid": "Loki" },
       "targets": [
         {
-          "expr": "{service_name=~\".+\"}",
+          "expr": "{job=\"docker\", container=~\"$container\", service=~\"$service\"}",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "showLabels": true,
+        "wrapLogMessage": true,
+        "enableLogDetails": true,
+        "sortOrder": "Descending",
+        "dedupStrategy": "none"
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 20 },
+      "id": 5,
+      "title": "Infrastructure Logs (Loki & Grafana Internal)",
+      "type": "logs",
+      "datasource": { "type": "loki", "uid": "Loki" },
+      "targets": [
+        {
+          "expr": "{job=~\"loki|grafana\"}",
           "refId": "A"
         }
       ],
@@ -93,9 +142,46 @@
   "schemaVersion": 38,
   "style": "dark",
   "tags": ["loki", "logs", "analytics"],
+  "templating": {
+    "list": [
+      {
+        "current": { "selected": true, "text": "All", "value": "$__all" },
+        "datasource": { "type": "loki", "uid": "Loki" },
+        "definition": "label_values(container)",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "container",
+        "options": [],
+        "query": { "label": "container", "refId": "LokiVariableQuery", "stream": "", "type": 1 },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": { "selected": true, "text": "All", "value": "$__all" },
+        "datasource": { "type": "loki", "uid": "Loki" },
+        "definition": "label_values(service)",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "service",
+        "options": [],
+        "query": { "label": "service", "refId": "LokiVariableQuery", "stream": "", "type": 1 },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      }
+    ]
+  },
   "time": { "from": "now-1h", "to": "now" },
   "timepicker": { "refresh_intervals": ["5s", "10s", "30s", "1m", "5m"] },
   "timezone": "browser",
   "title": "Centralized Log Analytics (Loki)",
   "uid": "loki-logs"
 }
+

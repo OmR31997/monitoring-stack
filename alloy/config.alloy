@@ -1,56 +1,96 @@
 // ================================
-// Prometheus scraping
-// ================================
-
-prometheus.scrape "node_exporter" {
-  targets = [
-    {
-      "__address__" = "node-exporter:9100",
-      "job"        = "node-exporter",
-    },
-  ]
-
-  forward_to = [
-    prometheus.remote_write.default.receiver,
-  ]
-}
-
-prometheus.scrape "cadvisor" {
-  targets = [
-    {
-      "__address__" = "cadvisor:8080",
-      "job"        = "cadvisor",
-    },
-  ]
-
-  forward_to = [
-    prometheus.remote_write.default.receiver,
-  ]
-}
-
-// ================================
-// Remote write to Prometheus
-// ================================
-
-prometheus.remote_write "default" {
-  endpoint {
-    url = "http://prometheus:9090/api/v1/write"
-  }
-}
-
-// ================================
 // Loki Log Scraping for Docker Containers
 // ================================
+
 
 discovery.docker "containers" {
   host = "unix:///var/run/docker.sock"
 }
 
+discovery.relabel "docker_containers" {
+  targets = discovery.docker.containers.targets
+
+  // Drop alloy container logs to avoid self-scraping log loops
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/?alloy"
+    action        = "drop"
+  }
+
+  // Extract container name
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/?(.*)"
+    target_label  = "container"
+  }
+
+  // Extract service name from docker compose label or fallback to container name
+  rule {
+    source_labels = ["__meta_docker_container_label_com_docker_compose_service"]
+    regex         = "(.+)"
+    target_label  = "service"
+  }
+
+  // Assign job label based on container name (separate loki & grafana from application logs)
+  rule {
+    source_labels = ["container"]
+    regex         = "(loki|grafana)"
+    target_label  = "job"
+  }
+
+  rule {
+    source_labels = ["job"]
+    regex         = "^$"
+    replacement   = "docker"
+    target_label  = "job"
+  }
+}
+
+
 loki.source.docker "default" {
   host       = "unix:///var/run/docker.sock"
-  targets    = discovery.docker.containers.targets
-  forward_to = [loki.write.default.receiver]
+  targets    = discovery.relabel.docker_containers.output
+  forward_to = [loki.process.docker.receiver]
 }
+
+loki.process "docker" {
+  forward_to = [loki.write.default.receiver]
+
+  // Stage 1: Attempt JSON log parsing for application logs
+  stage.json {
+    expressions = {
+      extracted_level   = "level",
+      extracted_msg     = "message",
+      extracted_service = "service",
+    }
+  }
+
+  // Stage 2: Fallback regex level extraction for plain text logs
+  stage.regex {
+    expression = "(?i)\\[?(?P<regex_level>FATAL|ERROR|WARN|WARNING|INFO|DEBUG|TRACE)\\]?"
+  }
+
+  // Stage 3: Extract level label
+  stage.labels {
+    values = {
+      level = "extracted_level",
+    }
+  }
+
+  // Stage 4: Re-format log message if extracted_msg exists, otherwise fallback to raw log
+  stage.template {
+    source   = "formatted_msg"
+    template = "{{ if .extracted_msg }}{{ .extracted_msg }}{{ else }}{{ .Entry }}{{ end }}"
+  }
+
+  stage.output {
+    source = "formatted_msg"
+  }
+}
+
+
+
+
 
 loki.write "default" {
   endpoint {
