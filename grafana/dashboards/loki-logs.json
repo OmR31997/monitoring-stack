@@ -48,7 +48,7 @@
       "datasource": { "type": "loki", "uid": "Loki" },
       "targets": [
         {
-          "expr": "sum(count_over_time({job=\"docker\", service=~\"$service\"} |~ \"(?i)(error|err|fail|fatal|exception)\" [5m]))",
+          "expr": "sum(count_over_time({job=\"docker\", service=~\"$service\"} |~ \"(?i)(error|err|fail|fatal|exception)\" !~ \"(?i)(read-write layer ID|Failed to create existing container)\" [5m])) or vector(0)",
           "legendFormat": "Errors",
           "refId": "A"
         }
@@ -76,7 +76,7 @@
       "datasource": { "type": "loki", "uid": "Loki" },
       "targets": [
         {
-          "expr": "sum(count_over_time({job=\"docker\", service=~\"$service\"} |~ \"(?i)(warn|warning)\" [5m]))",
+          "expr": "sum(count_over_time({job=\"docker\", service=~\"$service\"} |~ \"(?i)(warn|warning)\" !~ \"(?i)(read-write layer ID|Failed to create existing container)\" [5m])) or vector(0)",
           "legendFormat": "Warnings",
           "refId": "A"
         }

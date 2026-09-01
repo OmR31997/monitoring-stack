@@ -56,6 +56,11 @@ loki.source.docker "default" {
 loki.process "docker" {
   forward_to = [loki.write.default.receiver]
 
+  // Drop noisy cAdvisor layerdb logs for deleted container cgroups
+  stage.drop {
+    expression = ".*failed to identify the read-write layer ID.*"
+  }
+
   // Stage 1: Attempt JSON log parsing for application logs
   stage.json {
     expressions = {
